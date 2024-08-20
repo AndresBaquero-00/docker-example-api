@@ -30,9 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
-
     private JwtService jwtService;
-
     private AccountRepository accountRepository;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService,
