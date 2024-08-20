@@ -1,6 +1,7 @@
 package com.andresbaquero.docker_example.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.andresbaquero.docker_example.models.AccountModel;
 import com.andresbaquero.docker_example.models.UserModel;
@@ -48,8 +49,9 @@ public class CreateUserDTO {
         AccountModel account = new AccountModel();
         account.setEmail(email);
         account.setPassword(password);
+        account.setRoles(List.of(AccountModel.ROLE_CLIENT));
         account.setLogins(0L);
-        account.setState(AccountModel.ACTIVE);
+        account.setState(AccountModel.STATE_ACTIVE);
         account.setLastLogin(null);
         account.setTimestamp(new Date());
 

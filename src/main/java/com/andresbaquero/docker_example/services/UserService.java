@@ -93,7 +93,7 @@ public class UserService {
 
         try {
             Optional<AccountModel> accountSaved = accountRepository.findOneByEmail(userSaved.get().getEmail());
-            String script = "ctx._source.state = '%s'".formatted(AccountModel.INACTIVE);
+            String script = "ctx._source.state = '%s'".formatted(AccountModel.STATE_INACTIVE);
 
             es.update(b -> b
                     .index(AccountModel.INDEX)
