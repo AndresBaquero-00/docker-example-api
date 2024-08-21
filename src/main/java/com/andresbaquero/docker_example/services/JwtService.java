@@ -39,10 +39,12 @@ public class JwtService {
 
     }
 
-    public String generateToken(String id, List<String> roles) {
+    public String generateToken(String id, String userId, String remote, List<String> roles) {
         Claims claims;
         try {
             claims = Jwts.claims()
+                    .add("user", userId)
+                    .add("remote", remote)
                     .add("authorities", new ObjectMapper().writeValueAsString(roles))
                     .build();
 

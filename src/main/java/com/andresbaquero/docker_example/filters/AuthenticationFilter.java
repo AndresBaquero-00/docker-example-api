@@ -16,7 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.andresbaquero.docker_example.dto.LoginAccountDTO;
 import com.andresbaquero.docker_example.models.AccountModel;
+import com.andresbaquero.docker_example.models.UserModel;
 import com.andresbaquero.docker_example.repositories.AccountRepository;
+import com.andresbaquero.docker_example.repositories.UserRepository;
 import com.andresbaquero.docker_example.services.JwtService;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -32,13 +34,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
     private JwtService jwtService;
     private AccountRepository accountRepository;
+    private UserRepository userRepository;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService,
-            AccountRepository accountRepository) {
+            AccountRepository accountRepository, UserRepository userRepository) {
         super(authenticationManager);
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -68,12 +72,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
         AccountModel account = (AccountModel) authResult.getPrincipal();
-
         account.setLogins(account.getLogins() + 1);
         account.setLastLogin(new Date());
         accountRepository.save(account, RefreshPolicy.IMMEDIATE);
+        
+        UserModel user = userRepository.findOneByEmail(account.getEmail()).get();
 
-        String token = jwtService.generateToken(account.getId(), account.getRoles());
+        String token = jwtService.generateToken(account.getId(), user.getId(), request.getRemoteAddr(), account.getRoles());
         Map<String, String> res = Collections.singletonMap("token", token);
 
         response.addHeader(JwtService.HEADER_AUTHORIZATION, JwtService.PREFIX_TOKEN + token);

@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.andresbaquero.docker_example.filters.AuthenticationFilter;
 import com.andresbaquero.docker_example.filters.JwtAuthenticationFilter;
 import com.andresbaquero.docker_example.repositories.AccountRepository;
+import com.andresbaquero.docker_example.repositories.UserRepository;
 import com.andresbaquero.docker_example.services.JwtService;
 
 import jakarta.servlet.Filter;
@@ -33,12 +34,15 @@ public class SecurityConfiguration {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private Filter getFilter() throws Exception {
-        return new AuthenticationFilter(getAuthenticationManager(), jwtService, accountRepository);
+        return new AuthenticationFilter(getAuthenticationManager(), jwtService, accountRepository, userRepository);
     }
 
     private Filter getJwtFilter() throws Exception {
-        return new JwtAuthenticationFilter(getAuthenticationManager(), jwtService, accountRepository);
+        return new JwtAuthenticationFilter(getAuthenticationManager(), jwtService, accountRepository, userRepository);
     }
 
     @Bean
