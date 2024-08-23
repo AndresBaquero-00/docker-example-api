@@ -3,6 +3,7 @@ package com.andresbaquero.docker_example.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.andresbaquero.docker_example.dto.CreateUserDTO;
 import com.andresbaquero.docker_example.dto.UpdateUserDTO;
+import com.andresbaquero.docker_example.models.AuthenticatedModel;
 import com.andresbaquero.docker_example.services.UserService;
 
 import jakarta.validation.Valid;
@@ -35,13 +37,21 @@ public class UserController {
         return service.createUser(request);
     }
 
-    @PatchMapping(path = "/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UpdateUserDTO request) {
+    @PatchMapping(path = { "", "/{id}" })
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UpdateUserDTO request, Authentication auth) {
+        if (id == null || id.isEmpty()) {
+            id = ((AuthenticatedModel) auth.getDetails()).getUserId();
+        }
+
         return service.updateUser(id, request.getUser());
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+    @DeleteMapping(path = { "", "/{id}" })
+    public ResponseEntity<?> deleteUser(@PathVariable String id, Authentication auth) {
+        if (id == null || id.isEmpty()) {
+            id = ((AuthenticatedModel) auth.getDetails()).getUserId();
+        }
+
         return service.deleteUser(id);
     }
 
