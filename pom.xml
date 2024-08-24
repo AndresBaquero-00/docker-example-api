@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.andresbaquero</groupId>
 	<artifactId>docker-example</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>docker-example</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Aplicación de TODOs utilizando Elasticsearch y Spring Boot.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -83,6 +84,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>docker-example</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -98,6 +100,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
