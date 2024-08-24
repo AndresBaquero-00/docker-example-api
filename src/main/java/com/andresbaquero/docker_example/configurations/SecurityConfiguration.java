@@ -1,7 +1,6 @@
 package com.andresbaquero.docker_example.configurations;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
