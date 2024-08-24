@@ -34,7 +34,6 @@ public class JwtService {
 
             return claims;
         } catch (JwtException e) {
-            System.out.println(e.getMessage());
             return null;
         }
 

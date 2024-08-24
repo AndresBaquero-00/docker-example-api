@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 @Service
 public class UserService {
 
+    Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private ElasticsearchClient es;
 
@@ -38,11 +42,13 @@ public class UserService {
     private AccountRepository accountRepository;
 
     public ResponseEntity<?> findAllUsers() {
+        logger.info("Listando usuarios");
         PageImpl<UserModel> users = (PageImpl<UserModel>) userRepository.findAll();
         return new ResponseEntity<>(users.getContent(), HttpStatus.OK);
     }
 
     public ResponseEntity<?> createUser(CreateUserDTO request) {
+        logger.info("Creando el usuario " + request.getEmail());
         Optional<AccountModel> exists = accountRepository.findOneByEmail(request.getEmail());
         if (exists.isPresent()) {
             String message = "Ya existe un usuario con el correo electrónico diligenciado.";
@@ -60,15 +66,16 @@ public class UserService {
     }
 
     public ResponseEntity<?> updateUser(String id, UserModel user) {
-        Optional<UserModel> saved = userRepository.findById(id);
-        if (!saved.isPresent()) {
+        logger.info("Actualizando el usuario " + id);
+        Optional<UserModel> userSaved = userRepository.findById(id);
+        if (userSaved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         try {
             Map<String, String> doc = new HashMap<>();
-            doc.put("name", user.getName() != null ? user.getName() : saved.get().getName());
-            doc.put("lastName", user.getLastName() != null ? user.getLastName() : saved.get().getLastName());
+            doc.put("name", user.getName() != null ? user.getName() : userSaved.get().getName());
+            doc.put("lastName", user.getLastName() != null ? user.getLastName() : userSaved.get().getLastName());
 
             es.update(b -> b
                     .index(UserModel.INDEX)
@@ -77,17 +84,20 @@ public class UserService {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ElasticsearchException e) {
+            logger.error(e.getMessage());
             return new ResponseEntity<>(Collections.singletonMap("message", e.toString()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
+            logger.error(e.getMessage());
             return new ResponseEntity<>(Collections.singletonMap("message", e.toString()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public ResponseEntity<?> deleteUser(String id) {
+        logger.info("Eliminando el usuario " + id);
         Optional<UserModel> userSaved = userRepository.findById(id);
-        if (!userSaved.isPresent()) {
+        if (userSaved.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -105,9 +115,11 @@ public class UserService {
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (ElasticsearchException e) {
+            logger.error(e.getMessage());
             return new ResponseEntity<>(Collections.singletonMap("message", e.toString()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
+            logger.error(e.getMessage());
             return new ResponseEntity<>(Collections.singletonMap("message", e.toString()),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }

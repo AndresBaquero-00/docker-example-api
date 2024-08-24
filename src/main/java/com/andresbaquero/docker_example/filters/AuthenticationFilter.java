@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.RefreshPolicy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +32,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     private AuthenticationManager authenticationManager;
     private JwtService jwtService;
@@ -57,11 +61,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             username = user.getEmail();
             password = user.getPassword();
         } catch (StreamReadException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (DatabindException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         UsernamePasswordAuthenticationToken at = new UsernamePasswordAuthenticationToken(username, password);

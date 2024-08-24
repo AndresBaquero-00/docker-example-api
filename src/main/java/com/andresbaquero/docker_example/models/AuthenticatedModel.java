@@ -13,7 +13,6 @@ public class AuthenticatedModel {
     private String email;
     private List<String> roles;
 
-
     public AuthenticatedModel(AccountModel account, UserModel user) {
         this.accountId = account.getId();
         this.userId = user.getId();
