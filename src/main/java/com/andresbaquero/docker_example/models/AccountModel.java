@@ -28,8 +28,8 @@ public class AccountModel implements UserDetails {
     public static final String STATE_ACTIVE = "A";
     public static final String STATE_INACTIVE = "I";
 
-    public static final String ROLE_CLIENT = "C";
-    public static final String ROLE_ADMIN = "A";
+    public static final String ROLE_CLIENT = "ROLE_CLIENT";
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
 
     @Id
     @ReadOnlyProperty

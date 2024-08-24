@@ -47,11 +47,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String token = header.replace(JwtService.PREFIX_TOKEN, "");
         Claims claims = jwtService.verifyToken(token);
         if (claims == null) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             return;
         }
         if (!request.getRemoteAddr().equals(claims.get("remote"))) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             return;
         }
 
