@@ -1,5 +1,8 @@
 package com.andresbaquero.docker_example.configurations;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.andresbaquero.docker_example.filters.AuthenticationFilter;
 import com.andresbaquero.docker_example.filters.JwtAuthenticationFilter;
@@ -69,6 +75,19 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
+    }
+
+    @Bean
+    CorsConfigurationSource getCors() {
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOriginPatterns(Arrays.asList("*"));
+        cors.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        cors.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
+        cors.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource corsSource = new UrlBasedCorsConfigurationSource();
+        corsSource.registerCorsConfiguration("/**", cors);
+        return corsSource;
     }
 
 }
